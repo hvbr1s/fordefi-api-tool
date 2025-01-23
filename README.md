@@ -37,15 +37,15 @@ A tool for executing programmatic transactions through Fordefi.
 
 1. Start the application:
    ```bash
-   make
+   python3 app.py
    ```
 
 2. Follow the interactive prompts:
-   - Enter Vault ID (or press Enter for default)
-   - Enter destination address (or press Enter for default)
+   - Enter Vault ID (or press Enter to use your configured default Vault)
+   - Enter destination address (or press Enter to use your configured default destination address)
    - Select network type (for example `EVM`)
    - For EVM: specify the network (e.g., bsc, arbitrum, ethereum)
-   - Enter token ticker (or press Enter for native asset)
+   - Enter token ticker (or press Enter for native asset -ETH, BNB, etc)
    - Specify the amount
    - Add an optional note
 
