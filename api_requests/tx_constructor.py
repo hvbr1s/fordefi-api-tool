@@ -1,18 +1,8 @@
-__all__ = ['evm_tx_native', 'sol_tx_native', 'sui_tx_native', 'ton_tx_native']
-
-from dotenv import load_dotenv
-
-load_dotenv()
+__all__ = ['evm_tx_native', 'sol_tx_native', 'sui_tx_native', 'ton_tx_native', 'aptos_tx_native', 'btc_tx_native']
 
 def evm_tx_native(evm_chain, vault_id, destination, custom_note, value):
 
-    print(f"⚙️ Preparing tx for {value} gwei!")
-
-    """
-    Native ETH transfer
-    "580000000000000" wei = $2 USD of ETH
-
-    """
+    print(f"⚙️ Preparing transaction to {destination} for {value} gwei!")
 
     request_json = {
         "signer_type": "api_signer",
@@ -45,7 +35,7 @@ def evm_tx_native(evm_chain, vault_id, destination, custom_note, value):
 
 def sol_tx_native(vault_id, destination, custom_note, value):
 
-    print(f"⚙️ Preparing transaction for {value} lamports!")
+    print(f"⚙️ Preparing transaction to {destination} for {value} lamports!")
 
     request_json = {
 

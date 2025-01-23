@@ -1,35 +1,28 @@
 __all__ = ['evm_tx_tokens', 'sol_tx_tokens']
-
 from decimal import Decimal
-from dotenv import load_dotenv
+from token_configs.evm import EVM_TOKEN_CONFIG
+from token_configs.solana import SOL_TOKEN_CONFIG
 
-load_dotenv()
 
 def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
 
-    if evm_chain == "arbitrum":
-        if token == "usdc":
-            contract_address = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"
-            value = str(int(Decimal(value) * Decimal('1000000')))  # 6 decimals
-        elif token == "usdt":
-            contract_address = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"
-            value = str(int(Decimal(value) * Decimal('1000000')))  # 6 decimals
-        else:
-            raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'") 
-    elif evm_chain == "bsc":
-        if token == "usdt":
-            contract_address = "0x55d398326f99059fF775485246999027B3197955"
-            value = str(int(Decimal(value) * Decimal('1000000000000000000')))
-        else:
-            raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'")   # 18 decimals
-    elif evm_chain == "ethereum":
-        if token == "usdt":
-            contract_address = "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-            value = str(int(Decimal(value) * Decimal('1000000')))  # 6 decimals
-        else:
-            raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'") 
-    else:
-        raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'")
+    # 1. Validate the chain
+    if evm_chain not in EVM_TOKEN_CONFIG:
+        raise ValueError(f"Chain '{evm_chain}' is not supported. Please add it to './api_requests/token_configs/evm.py'")
+
+    # 2. Validate the token
+    chain_data = EVM_TOKEN_CONFIG[evm_chain]
+    if token not in chain_data:
+        raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'.")
+
+    # 3. Retrieve contract and decimals
+    token_info = chain_data[token]
+    contract_address = token_info["contract_address"]
+    decimals = token_info["decimals"]
+
+    # 4. Convert human-readable value to the proper decimal representation
+    multiplier = Decimal(10) ** decimals
+    on_chain_value = str(int(Decimal(value) * multiplier))
 
     request_json =  {
     "signer_type": "api_signer",
@@ -43,7 +36,7 @@ def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
         "to": destination,
         "value": {
            "type": "value",
-           "value": value
+           "value": on_chain_value
         },
         "asset_identifier": {
              "type": "evm",
@@ -64,12 +57,16 @@ def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
 
 def sol_tx_tokens(vault_id, destination, custom_note, value, token):
 
-    print(f"Sending {value} {token} from {vault_id} to {destination}")
+    # 1. Validate that the token is supported
+    if token not in SOL_TOKEN_CONFIG:
+        raise ValueError(f"Token '{token}' is not supported on Solana. Please add it to './api_requests/token_configs/solana.py")
 
-    if token =="usdc":
-        program_address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
-    else:
-        program_address = ""
+    # 2. Retrieve the program address from the dictionary
+    program_address = SOL_TOKEN_CONFIG[token]
+    
+    # 3. (Optional) Log for debugging or user feedback
+    print(f"Sending {value} {token} from {vault_id} to {destination}")
+    
 
     request_json = {
         "signer_type": "api_signer",

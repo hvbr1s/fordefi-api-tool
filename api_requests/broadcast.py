@@ -4,7 +4,7 @@ import requests
 import base64
 import json
 
-def broadcast_tx(path, access_token, signature, timestamp, request_body):
+def post_tx(path, access_token, signature, timestamp, request_body):
 
     try:
         resp_tx = requests.post(
