@@ -49,7 +49,16 @@ ECOSYSTEM_CONFIGS = {
                     "decimals": 6
                 }
             }
+            # Add more Solana tokens here as needed
         },
     },
-    # Add additional ecosystems here: 'sui', 'ton', 'apt', 'btc', etc.
+    "sui": {
+        "default_vault": os.getenv("SUI_VAULT_ID"),
+        "default_dest": os.getenv("DEFAULT_DESTINATION_ADDRESS_SUI"),
+        "native": {
+            "decimals": 1_000_000_000,  # mist
+            "unit_name": "SUI"
+        },
+    }
+    # Add additional ecosystems here: 'ton', 'apt', 'btc', etc.
 }
