@@ -5,6 +5,9 @@ build/
 dist/
 wheels/
 *.egg-info
+.DS_STORE
+uv.lock
+.vscode
 
 # Virtual environments
 .venv
@@ -19,5 +22,5 @@ secret/*
 response_data.json
 
 # Examples
-examples/*
+examples
 

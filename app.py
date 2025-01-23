@@ -2,16 +2,16 @@ import os
 import json
 import datetime
 from dotenv import load_dotenv
-from api_requests.broadcast import broadcast_tx
 from signing.signer import sign
+from api_requests.broadcast import post_tx
 from utils.tx_processor import process_transaction
 
 load_dotenv()
+FORDEFI_API_USER_TOKEN = os.getenv("FORDEFI_API_USER_TOKEN")
 
 ## User interface
-
-vault_id = input("👋 Welcome! Please enter your vault ID (or press enter to use the default Vault): ").strip().lower() or "default"
-destination =  input("🚚 Sounds good! What's the destination address? (or press enter to use the default destination address): ").strip() or "default"
+vault_id = input("👋 Welcome! Please enter your vault ID (or press enter to use your configured default Vault): ").strip().lower() or "default"
+destination =  input("🚚 Sounds good! What's the destination address? (or press enter to use your configured default destination address): ").strip() or "default"
 
 evm_chain = None
 token = None
@@ -37,19 +37,9 @@ custom_note = input("🗒️  Would you like to add a note? ").strip().lower() o
 print(f"🚀 Excellent! Sending from vault {vault_id} to {destination} on {ecosystem.upper()} -> {evm_chain}.")
 
 ## Building transaction
-
 request_json = process_transaction(ecosystem, evm_chain, vault_id, destination, value, custom_note, token)
 
-# OPTIONAL -> Save request JSON to file (for debugging)
-# timestamp_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-# filename = f"transaction_request_{timestamp_str}.json"
-# with open(filename, 'w') as f:
-#     json.dump(request_json, f, indent=2)
-# print(f"📄 Tx JSON saved to {filename}")
-
-## Broadcast transaction
-
-access_token = os.getenv("FORDEFI_API_TOKEN")
+## Broadcasting transaction
 request_body = json.dumps(request_json)
 path = "/api/v1/transactions"
 timestamp = datetime.datetime.now().strftime("%s")
@@ -58,7 +48,7 @@ payload = f"{path}|{timestamp}|{request_body}"
 signature = sign(payload=payload)
 
 try:
-    resp_tx = broadcast_tx(path, access_token, signature, timestamp, request_body)
+    resp_tx = post_tx(path, FORDEFI_API_USER_TOKEN, signature, timestamp, request_body)
     print("✅ Transaction submitted successfully!")
     print(f"Transaction ID: {resp_tx.json().get('id', 'N/A')}")
     
