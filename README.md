@@ -1,17 +1,23 @@
-# Fordefi Transaction Helper Tool
+# Fordefi CLI
 
-A tool for executing programmatic transactions through Fordefi.
+A command-line interface for broadcasting transactions using the Fordefi API.
 
-⚠️ This tool is still in development, please test extensively with _small amounts_ before use.
+⚠️ This tool is still in development, please test extensively with _small amounts_.
 
 ## Prerequisites
+
+- Python 3.x
+- Fordefi API User Token
+- Fordefi API Signer
+
+## Setup
 
 1. Install `uv` package manager:
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-2. Set up the project:
+2. Set up the project an install dependencies:
    ```bash
    git clone <repository-url>
    cd <repository-name>
@@ -19,10 +25,8 @@ A tool for executing programmatic transactions through Fordefi.
    ```
 
 3. Configure environment variables:
-   Create a `.env` file in the root directory with your Fordefi API user token and your default Vault IDs and destination addresses:
+   Create a `.env` file in the root directory with your Fordefi API user token:
    ```plaintext
-   EVM_VAULT_ID="your_vault_id"
-   DEFAULT_DESTINATION_ADDRESS_EVM="your_default_evm_destination_address"
    FORDEFI_API_USER_TOKEN="your_token"
    ```
 4. Place your API Signer's `.pem` private key file in a `/secret` directory in the root folder.
@@ -33,21 +37,35 @@ A tool for executing programmatic transactions through Fordefi.
    ```
    Then select "Run signer" in the Docker container.
 
-## Usage
-
-1. Start the application:
+6. Make the script executable:
    ```bash
-   python3 app.py
+   chmod +x fordefi_cli.py
    ```
 
-2. Follow the interactive prompts:
-   - Enter Vault ID (or press Enter to use your configured default Vault)
-   - Enter destination address (or press Enter to use your configured default destination address)
-   - Select network type (for example `EVM`)
-   - For EVM: specify the network (e.g., bsc, arbitrum, ethereum)
-   - Enter token ticker (or press Enter for native asset -ETH, BNB, etc)
-   - Specify the amount
-   - Add an optional note
+## Usage
+
+```bash
+python fordefi_cli.py --vault-id <VAULT_ID> --destination <ADDRESS> --ecosystem <NETWORK> --value <AMOUNT> [OPTIONS]
+```
+
+### Required Arguments
+
+- `--vault-id`: The vault ID from which to send the transaction
+- `--destination`: The destination address
+- `--ecosystem`: Network on which to broadcast the transaction (`sol`, `evm`, `sui`, `ton`, `apt`, `btc`)
+- `--value`: Amount to send
+
+### Optional Arguments
+
+- `--evm-chain`: Required only if ecosystem is 'evm'. Options: `arbitrum`, `optimism`, `ethereum`, `bsc`
+- `--token`: Token ticker (e.g., 'usdc', 'weth'). Omit for native assets
+- `--note`: Custom note for the transaction
+
+### Example
+
+```bash
+./fordefi_cli.py --vault-id v123 --destination 0x123... --ecosystem evm --evm-chain ethereum --value 1.5 --token usdc --note "Test transfer"
+```
 
 The transaction will be broadcast after confirming all details.
 

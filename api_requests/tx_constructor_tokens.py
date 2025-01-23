@@ -32,12 +32,7 @@ def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, on_chain_value,
 
 
 def sol_tx_tokens(vault_id, destination, custom_note, on_chain_value, program_address):
-    """
-    A simpler version of sol_tx_tokens:
-      - No token validation
-      - We assume on_chain_value is already computed
-      - We assume program_address is already known
-    """
+
     request_json = {
         "signer_type": "api_signer",
         "type": "solana_transaction",

@@ -15,26 +15,33 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
     if not eco_config:
         raise ValueError(f"Ecosystem '{ecosystem}' is not supported.")
 
-    # 2) Resolve "default" vault/destination from configs
-    if vault_id == "default":
-        vault_id = eco_config["default_vault"]
-    if destination == "default":
-        destination = eco_config["default_dest"]
+    # # 2) Resolve "default" vault/destination from configs
+    # if vault_id == "default":
+    #     vault_id = eco_config["default_vault"]
+    # if destination == "default":
+    #     destination = eco_config["default_dest"]
 
     # 3) Convert value to float
     try:
-        value = value.replace(",", ".")
-        float_value = float(value)
-    except ValueError:
+        # Replace commas with dots to handle locale-specific separators
+        decimal_value = Decimal(value.replace(",", "."))
+    except Exception:
         raise ValueError("Invalid amount provided.")
 
+    # 4) Native vs. Token logic
     if not token:
-        # 4a) We summon the native coin logic
-        decimals_native = eco_config["native"]["decimals"]
-        smallest_unit = int(float_value * decimals_native)
-        if smallest_unit <= 0:
-            raise ValueError(f"{eco_config['native']['unit_name']} amount must be positive!")
+        # ---- NATIVE COIN TRANSFER ----
+        decimals_native = Decimal(eco_config["native"]["decimals"])
+        smallest_unit = int(decimal_value * decimals_native)
+        print(f"Smallest unit -> {smallest_unit}")
 
+        # If the smallest unit is < 1, it means the requested amount is too small
+        if smallest_unit < 1:
+            raise ValueError(
+                f"{eco_config['native']['unit_name']} amount must be at least "
+                f"{Decimal(1) / decimals_native} ({1} smallest unit)."
+            )
+        
         # Then we wecide which native tx builder to call
         tx_functions = {
             "sol": sol_tx_native,
@@ -50,14 +57,12 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
 
         # EVM native has a different signature that requires an extra evm param
         if ecosystem == "evm":
-            return builder(evm_chain, vault_id, destination, custom_note, str(smallest_unit))
+            return builder(evm_chain, vault_id, destination, custom_note, str(value))
         else:
-            return builder(vault_id, destination, custom_note, str(smallest_unit))
+            return builder(vault_id, destination, custom_note, str(value))
 
     else:
         # 4b) Token logic
-        # Instead of letting the second script do *all* the checks, we do them here
-
         if ecosystem == "evm":
             evm_config = ECOSYSTEM_CONFIGS["evm"]
             if evm_chain not in evm_config["tokens"]:
