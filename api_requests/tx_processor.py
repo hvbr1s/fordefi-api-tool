@@ -24,7 +24,6 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
         # ---- NATIVE COIN TRANSFER ----
         decimals_native = Decimal(eco_config["native"]["decimals"])
         smallest_unit = int(decimal_value * decimals_native)
-        print(f"Smallest unit -> {smallest_unit}")
 
         # If the smallest unit is < 1, it means the requested amount is too small
         if smallest_unit < 1:
