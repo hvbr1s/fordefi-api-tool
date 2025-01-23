@@ -28,7 +28,7 @@ while True:
     else:
         print("❌ Invalid input. Please choose SOL, EVM, SUI, TON, APT, BTC")
 
-token = input("🪙 What is the token ticker? If you're sending a native asset (ETH, SOL, BNB, etc) press return: ").strip().lower() or None
+token = input("🪙 What is the token ticker? If you're sending a native asset (ETH, SOL, BNB, BTC, APT, SUI, TON etc) press return: ").strip().lower() or None
 
 value =  input("💸 Ok! How much would you like to spend? ").strip().lower()
 
