@@ -4,7 +4,7 @@ import datetime
 from dotenv import load_dotenv
 from signing.signer import sign
 from api_requests.broadcast import post_tx
-from utils.tx_processor import process_transaction
+from api_requests.tx_builder import process_transaction
 
 load_dotenv()
 FORDEFI_API_USER_TOKEN = os.getenv("FORDEFI_API_USER_TOKEN")

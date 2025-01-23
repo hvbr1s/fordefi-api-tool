@@ -5,7 +5,7 @@ load_dotenv()
 
 ECOSYSTEM_CONFIGS = {
     "sol": {
-        "vault_env": "SOL_VAULT_ID",
+        "default_vault": "9597e08a-32a8-4f96-a043-a3e7f1675f8d",
         "default_dest": os.getenv("DEFAULT_DESTINATION_ADDRESS_SOL"),
         "native": {
             "decimals": 1_000_000_000,  # lamports
@@ -20,7 +20,7 @@ ECOSYSTEM_CONFIGS = {
         },
     },
     "evm": {
-        "vault_env": "EVM_VAULT_ID",
+        "default_vault": os.getenv("EVM_VAULT_ID"),
         "default_dest": os.getenv("DEFAULT_DESTINATION_ADDRESS_EVM"),
         "native": {
             "decimals": 1_000_000_000_000_000_000,  # wei
@@ -53,9 +53,3 @@ ECOSYSTEM_CONFIGS = {
     },
     # Add additional ecosystems here: 'sui', 'ton', 'apt', 'btc', etc.
 }
-
-# Config check
-for eco, config in ECOSYSTEM_CONFIGS.items():
-    vault_key = config["vault_env"]
-    assert os.getenv(vault_key), f"Missing {vault_key} in environment variables"
-    assert config["default_dest"], f"Missing default destination address for {eco}"
