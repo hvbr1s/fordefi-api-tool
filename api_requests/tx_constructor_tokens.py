@@ -1,22 +1,22 @@
 __all__ = ['evm_tx_tokens', 'sol_tx_tokens']
 from decimal import Decimal
-from configs.token_configs.evm import EVM_TOKEN_CONFIG
-from configs.token_configs.solana import SOL_TOKEN_CONFIG
+from configs.ecosystem_configs import ECOSYSTEM_CONFIGS
 
 
 def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
 
     # 1. Validate the chain
-    if evm_chain not in EVM_TOKEN_CONFIG:
-        raise ValueError(f"Chain '{evm_chain}' is not supported. Please add it to './api_requests/token_configs/evm.py'")
+    evm_config = ECOSYSTEM_CONFIGS["evm"]
+    if evm_chain not in evm_config["tokens"]:
+        raise ValueError(f"Chain '{evm_chain}' is not supported. Please check ECOSYSTEM_CONFIGS.")
 
     # 2. Validate the token
-    chain_data = EVM_TOKEN_CONFIG[evm_chain]
-    if token not in chain_data:
+    chain_tokens = evm_config["tokens"][evm_chain]
+    if token not in chain_tokens:
         raise ValueError(f"Token '{token}' is not supported for chain '{evm_chain}'.")
 
     # 3. Retrieve contract and decimals
-    token_info = chain_data[token]
+    token_info = chain_tokens[token]
     contract_address = token_info["contract_address"]
     decimals = token_info["decimals"]
 
@@ -58,11 +58,18 @@ def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
 def sol_tx_tokens(vault_id, destination, custom_note, value, token):
 
     # 1. Validate that the token is supported
-    if token not in SOL_TOKEN_CONFIG:
-        raise ValueError(f"Token '{token}' is not supported on Solana. Please add it to './api_requests/token_configs/solana.py")
+    sol_config = ECOSYSTEM_CONFIGS["sol"]
+    if token not in sol_config["tokens"]:
+        raise ValueError(f"Token '{token}' is not supported on Solana. Please check ECOSYSTEM_CONFIGS.")
 
-    # 2. Retrieve the program address from the dictionary
-    program_address = SOL_TOKEN_CONFIG[token]
+    # 2. Retrieve the program address and decimals
+    token_info = sol_config["tokens"][token]
+    program_address = token_info["program_address"]
+    decimals = token_info["decimals"]
+
+    # 3. Convert human-readable value to the proper decimal representation
+    multiplier = Decimal(10) ** decimals
+    on_chain_value = str(int(Decimal(value) * multiplier))
     
     # 3. (Optional) Log for debugging or user feedback
     print(f"Sending {value} {token} from {vault_id} to {destination}")
