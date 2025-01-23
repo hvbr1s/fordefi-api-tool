@@ -45,7 +45,7 @@ A command-line interface for broadcasting transactions using the Fordefi API.
 ## Usage
 
 ```bash
-python fordefi_cli.py --vault-id <VAULT_ID> --destination <ADDRESS> --ecosystem <NETWORK> --value <AMOUNT> [OPTIONS]
+./fordefi_cli.py --vault-id <VAULT_ID> --destination <ADDRESS> --ecosystem <NETWORK> --value <AMOUNT> [OPTIONS]
 ```
 
 ### Required Arguments
