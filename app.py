@@ -4,7 +4,7 @@ import datetime
 from dotenv import load_dotenv
 from signing.signer import sign
 from api_requests.broadcast import post_tx
-from utils.tx_processor import process_transaction
+from api_requests.tx_processor import process_transaction
 
 load_dotenv()
 FORDEFI_API_USER_TOKEN = os.getenv("FORDEFI_API_USER_TOKEN")
@@ -28,7 +28,7 @@ while True:
     else:
         print("❌ Invalid input. Please choose SOL, EVM, SUI, TON, APT, BTC")
 
-token = input("🪙 What is the token ticker? If not a token press return: ").strip().lower() or None
+token = input("🪙 What is the token ticker? If you're sending a native asset (ETH, SOL, BNB, etc) press return: ").strip().lower() or None
 
 value =  input("💸 Ok! How much would you like to spend? ").strip().lower()
 
