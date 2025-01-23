@@ -1,9 +1,7 @@
 from decimal import Decimal
 from dotenv import load_dotenv
 from configs.ecosystem_configs import ECOSYSTEM_CONFIGS
-from api_requests.tx_constructor_native import (
-    evm_tx_native, sol_tx_native, sui_tx_native, ton_tx_native, aptos_tx_native, btc_tx_native
-)
+from api_requests.tx_constructor_native import (evm_tx_native, sol_tx_native, sui_tx_native, ton_tx_native, aptos_tx_native, btc_tx_native)
 from api_requests.tx_constructor_tokens import evm_tx_tokens, sol_tx_tokens
 
 load_dotenv()
@@ -15,20 +13,13 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
     if not eco_config:
         raise ValueError(f"Ecosystem '{ecosystem}' is not supported.")
 
-    # # 2) Resolve "default" vault/destination from configs
-    # if vault_id == "default":
-    #     vault_id = eco_config["default_vault"]
-    # if destination == "default":
-    #     destination = eco_config["default_dest"]
-
-    # 3) Convert value to float
+    # 2) Convert value to float
     try:
-        # Replace commas with dots to handle locale-specific separators
         decimal_value = Decimal(value.replace(",", "."))
     except Exception:
         raise ValueError("Invalid amount provided.")
 
-    # 4) Native vs. Token logic
+    # 3) Native vs. Token logic
     if not token:
         # ---- NATIVE COIN TRANSFER ----
         decimals_native = Decimal(eco_config["native"]["decimals"])
@@ -64,6 +55,7 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
     else:
         # 4b) Token logic
         if ecosystem == "evm":
+            #-----ERC20------
             evm_config = ECOSYSTEM_CONFIGS["evm"]
             if evm_chain not in evm_config["tokens"]:
                 raise ValueError(f"Chain '{evm_chain}' is not supported in EVMC config.")
@@ -86,6 +78,7 @@ def process_transaction(ecosystem, evm_chain, vault_id, destination, value, cust
             )
 
         elif ecosystem == "sol":
+            #-----SPL------
             sol_config = ECOSYSTEM_CONFIGS["sol"]
             if token not in sol_config["tokens"]:
                 raise ValueError(f"Token '{token}' is not supported on Solana.")
