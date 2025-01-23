@@ -23,7 +23,7 @@ A tool for executing programmatic transactions through Fordefi.
    ```plaintext
    EVM_VAULT_ID="your_vault_id"
    DEFAULT_DESTINATION_ADDRESS_EVM="your_default_evm_destination_address"
-   FORDEFI_API_TOKEN="your_token"
+   FORDEFI_API_USER_TOKEN="your_token"
    ```
 4. Place your API Signer's `.pem` private key file in a `/secret` directory in the root folder.
 

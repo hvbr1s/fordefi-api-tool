@@ -1,10 +1,10 @@
-__all__ = ['get_ecosystem_config']
+__all__ = ['get_native_asset__config']
 
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-def get_ecosystem_config(ecosystem):
+def get_native_asset__config(ecosystem):
     configs = {
         "sol": {
             "vault_env": "SOL_VAULT_ID",

@@ -1,7 +1,7 @@
 __all__ = ['evm_tx_tokens', 'sol_tx_tokens']
 from decimal import Decimal
-from token_configs.evm import EVM_TOKEN_CONFIG
-from token_configs.solana import SOL_TOKEN_CONFIG
+from configs.token_configs.evm import EVM_TOKEN_CONFIG
+from configs.token_configs.solana import SOL_TOKEN_CONFIG
 
 
 def evm_tx_tokens(evm_chain, vault_id, destination, custom_note, value, token):
